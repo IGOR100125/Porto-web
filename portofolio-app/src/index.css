@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Manrope:wght@300;400;500&display=swap');
+
+:root {
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'Manrope', sans-serif;
+  
+  --bg-color: #F8F8F6;
+  --text-dark: #121212;
+  --text-gray: #757575;
+  --accent-gold: #A68A56;
+  --border-light: #E5E4E2;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; background-color: var(--bg-color); }
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-color);
+  color: var(--text-dark);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+/* --- ANIMATION CLASSES (BERJALAN NAIK & TURUN) --- */
+.reveal-wrapper {
+  overflow: hidden;
+  display: block;
+}
+
+.reveal-text {
+  display: block;
+  transform: translateY(110%);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 1s ease-out, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.zoom-wrapper {
+  overflow: hidden;
+}
+
+.zoom-img {
+  width: 100%;
+  height: 100%;
+  transform: scale(1.2);
+  transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* State Aktif yang dipicu oleh Hook */
+.animate-on-scroll.is-visible .reveal-text { transform: translateY(0); }
+.animate-on-scroll.is-visible.fade-up { opacity: 1; transform: translateY(0); }
+.animate-on-scroll.is-visible .zoom-img { transform: scale(1); }
+
+/* --- HAMBURGER MENU --- */
+.hamburger {
+  width: 35px;
+  height: 18px;
+  position: relative;
+  cursor: pointer;
+  z-index: 1001; /* Di atas overlay */
+  background: transparent;
+  border: none;
+}
+
+.hamburger span {
+  position: absolute;
+  width: 100%;
+  height: 1.5px;
+  background-color: var(--text-dark);
+  transition: all 0.4s cubic-bezier(0.76, 0, 0.24, 1);
+  left: 0;
+}
+
+.hamburger span:nth-child(1) { top: 0; }
+.hamburger span:nth-child(2) { bottom: 0; width: 70%; right: 0; left: auto; }
+
+/* Hamburger saat Menu Terbuka (Jadi bentuk X) */
+.hamburger.open span { background-color: var(--text-dark); width: 100%; }
+.hamburger.open span:nth-child(1) { transform: rotate(45deg); top: 8px; }
+.hamburger.open span:nth-child(2) { transform: rotate(-45deg); bottom: 8.5px; }
+
+/* --- FULLSCREEN OVERLAY MENU --- */
+.menu-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: var(--bg-color);
+  z-index: 999;
+  transform: translateY(-100%); /* Tersembunyi di atas */
+  transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.menu-overlay.open {
+  transform: translateY(0);
+}
+
+.menu-link {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 6vw, 6rem);
+  text-decoration: none;
+  text-transform: uppercase;
+  color: transparent; /* Teks bolong */
+  -webkit-text-stroke: 1px var(--text-dark); /* Efek outline elegan */
+  transition: all 0.4s ease;
+}
+
+.menu-link:hover {
+  color: var(--text-dark); /* Teks terisi penuh saat di-hover */
+}
+
+/* --- BUTTON & UTILITIES --- */
+.premium-btn {
+  display: inline-block;
+  padding: 16px 40px;
+  border: 1px solid var(--text-dark);
+  color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.8rem;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.4s ease;
+  cursor: pointer;
+}
+.premium-btn::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: var(--text-dark); transform: scaleX(0); transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1); z-index: -1;
+}
+.premium-btn:hover { color: var(--bg-color); }
+.premium-btn:hover::before { transform: scaleX(1); transform-origin: left; }
+.section-padding { padding: 8rem 8%; }
+
+/* --- CSS LAINNYA YANG SUDAH ADA DI ATAS TETAPKAN --- */
+
+/* --- RESPONSIVE DESIGN UNTUK TABLET & MOBILE --- */
+
+/* Tablet & iPad (Screen max-width: 1024px) */
+@media screen and (max-width: 1024px) {
+  .section-padding {
+    padding: 6rem 5%;
+  }
+
+  /* Mengatur ulang layout grid agar tidak terlalu sempit */
+  section > div[style*="gridTemplateColumns"] {
+    grid-template-columns: 1fr !important;
+    gap: 3rem !important;
+  }
+
+  /* Menyesuaikan posisi gambar asimetris di Hero agar aman di tablet */
+  #beranda div[style*="position: absolute"] {
+    position: relative !important;
+    right: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    height: 400px !important;
+    margin-top: 2rem;
+  }
+}
+
+/* Mobile / HP (Screen max-width: 768px) */
+@media screen and (max-width: 768px) {
+  .section-padding {
+    padding: 4rem 6%;
+  }
+
+  /* Ukuran Judul Hero disesuaikan agar tidak terpotong di layar HP kecil */
+  #beranda h1 {
+    font-size: 3.2rem !important;
+  }
+
+  /* Menu fullscreen overlay di mobile */
+  .menu-link {
+    font-size: 2.5rem !important;
+  }
+
+  /* Tombol navigasi / aksi */
+  .premium-btn {
+    padding: 12px 28px;
+    font-size: 0.75rem;
+  }
+
+  /* Card Grid Portofolio & Arsip Mahakarya */
+  div[style*="display: grid"] {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+}
