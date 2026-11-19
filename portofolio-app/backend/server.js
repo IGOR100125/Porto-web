@@ -9,10 +9,10 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'db_tugas',
+    host: 'sql.freedb.tech',
+    user: 'u_8lAMhb',
+    password: 'lqrgahbokaDI',
+    database: 'freedb_pHUguz7K',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
