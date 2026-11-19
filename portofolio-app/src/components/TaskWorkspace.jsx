@@ -341,7 +341,7 @@ const TaskWorkspace = ({ handleNavigation }) => {
         {loading ? (
           <p style={{ color: 'var(--text-gray)' }}>Memuat dari database MySQL...</p>
         ) : tasks.length === 0 ? (
-          <p style={{ color: 'var(--text-gray)' }}>Belum ada tugas di database MySQL (db_tugas).</p>
+          <p style={{ color: 'var(--text-gray)' }}>Belum ada tugas di database.</p>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '2rem' }}>
             {tasks.map((task) => {
