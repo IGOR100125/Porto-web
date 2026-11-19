@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'; // 1. Import useRef
+import React, { useState, useEffect, useRef } from 'react';
 
 const TaskWorkspace = ({ handleNavigation }) => {
   const [tasks, setTasks] = useState([]);
@@ -13,10 +13,11 @@ const TaskWorkspace = ({ handleNavigation }) => {
   const [fileName, setFileName] = useState('');
   const [editingId, setEditingId] = useState(null);
 
-  // 2. Buat reference untuk input file HTML
+  // Reference untuk input file HTML
   const fileInputRef = useRef(null);
 
-  const API_URL = 'http://localhost:3000/api/tasks';
+  // Mengarah langsung ke api.php di folder htdocs InfinityFree
+  const API_URL = '/api.php';
 
   const loadTasksFromDB = async () => {
     setLoading(true);
@@ -50,7 +51,7 @@ const TaskWorkspace = ({ handleNavigation }) => {
     }
   };
 
-  // Submit Form
+  // Submit Form (Tambah Baru / Edit Data)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) return;
@@ -69,12 +70,11 @@ const TaskWorkspace = ({ handleNavigation }) => {
       file_data: fileData || null,
     };
 
-    const method = isEditing ? 'PUT' : 'POST';
-    const url = isEditing ? `${API_URL}/${editingId}` : API_URL;
+    const url = isEditing ? `${API_URL}?action=update&id=${editingId}` : API_URL;
 
     try {
       const res = await fetch(url, {
-        method: method,
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
@@ -90,7 +90,7 @@ const TaskWorkspace = ({ handleNavigation }) => {
     }
   };
 
-  // 3. Reset Form sekaligus mengosongkan elemen <input type="file" />
+  // Reset Form sekaligus mengosongkan elemen <input type="file" />
   const resetForm = () => {
     setTitle('');
     setDescription('');
@@ -100,7 +100,6 @@ const TaskWorkspace = ({ handleNavigation }) => {
     setFileName('');
     setEditingId(null);
 
-    // Reset elemen input file di browser
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -117,7 +116,6 @@ const TaskWorkspace = ({ handleNavigation }) => {
     setFileName(task.file_name || '');
     setFileData(task.file_data || null);
 
-    // Kosongkan selector file fisik saat masuk mode edit
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -128,26 +126,16 @@ const TaskWorkspace = ({ handleNavigation }) => {
     }
   };
 
-  // Toggle Status
+  // Toggle Status Selesai / Belum Selesai
   const handleToggleStatus = async (e, task) => {
     e.preventDefault();
     const newStatus = task.status === 'Selesai' ? 'Belum Selesai' : 'Selesai';
-    
-    const payload = {
-      title: task.title,
-      description: task.description || '',
-      task_date: task.task_date || null,
-      due_date: task.due_date || null,
-      status: newStatus,
-      file_name: task.file_name || null,
-      file_data: task.file_data || null
-    };
 
     try {
-      const res = await fetch(`${API_URL}/${task.id}`, {
-        method: 'PUT',
+      const res = await fetch(`${API_URL}?action=status&id=${task.id}`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ status: newStatus }),
       });
 
       const data = await res.json();
@@ -164,7 +152,9 @@ const TaskWorkspace = ({ handleNavigation }) => {
     e.preventDefault();
     if (!window.confirm('Hapus tugas ini dari database?')) return;
     try {
-      const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_URL}?action=delete&id=${id}`, {
+        method: 'POST',
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Gagal menghapus');
 
@@ -273,7 +263,6 @@ const TaskWorkspace = ({ handleNavigation }) => {
             <label style={{ display: 'block', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', color: 'var(--text-gray)' }}>
               Upload Berkas / File
             </label>
-            {/* 4. Pasang ref={fileInputRef} pada input file */}
             <input 
               ref={fileInputRef}
               type="file"
@@ -289,7 +278,6 @@ const TaskWorkspace = ({ handleNavigation }) => {
                 <p style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--accent-gold)' }}>
                   Preview File: {fileName}
                 </p>
-                {/* Tombol untuk hapus lampiran file dari form */}
                 <button 
                   type="button" 
                   onClick={() => {
@@ -356,7 +344,7 @@ const TaskWorkspace = ({ handleNavigation }) => {
                     border: '1px solid var(--border-light)',
                     display: 'flex',
                     flexDirection: 'column',
-                    justify: 'space-between',
+                    justifyContent: 'space-between',
                     opacity: isDone ? 0.75 : 1
                   }}
                 >
